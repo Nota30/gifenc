@@ -15,13 +15,13 @@ func main() {
 		Delay: 20,
 	}
 
-	// err := init.Decode("test/input/sword.gif")
-	// if err != nil {
-	// 	fmt.Print(err)
-	// }
-
-	err := init.Encode("test/output/")
+	err := init.Decode("test/input/sword.gif")
 	if err != nil {
 		fmt.Print(err)
 	}
+
+	// err := init.Encode("test/output/")
+	// if err != nil {
+	// 	fmt.Print(err)
+	// }
 }

@@ -5,7 +5,6 @@ import (
 	"image"
 	"image/draw"
 	"image/gif"
-	"image/png"
 	"io"
 	"os"
 )
@@ -23,7 +22,7 @@ func (config Config) Decode(path string) error {
 }
 
 // Split the GIF into images
-func split(file io.Reader, width int, height int, output Output) (err error) {
+func split(file io.Reader, width int, height int, output Output) (imgs []*image.RGBA, err error) {
 	defer func() {
 		if recv := recover(); recv != nil {
 			err = fmt.Errorf("error while decoding file: %s", recv)
@@ -32,7 +31,7 @@ func split(file io.Reader, width int, height int, output Output) (err error) {
 
 	gif, err := gif.DecodeAll(file)
 	if err != nil {
-		return fmt.Errorf("error while decoding file: %s", err)
+		return nil, fmt.Errorf("error while decoding file: %s", err)
 	}
 
 	x, y := getArea(gif)
@@ -46,23 +45,14 @@ func split(file io.Reader, width int, height int, output Output) (err error) {
 	dst := image.NewRGBA(image.Rect(0, 0, width, height))
 	draw.Draw(dst, dst.Bounds(), gif.Image[0], image.Point{}, draw.Src)
 
-	for i, img := range gif.Image {
+	var images []*image.RGBA
+	for _, img := range gif.Image {
 		draw.Draw(dst, dst.Bounds(), img, image.Point{}, draw.Over)
 
-		file, err := os.Create(fmt.Sprintf("%s%s%d%s", output.Path, output.Name, i, ".png"))
-		if err != nil {
-			return fmt.Errorf("error while creating image: %s", err)
-		}
-
-		err = png.Encode(file, dst)
-		if err != nil {
-			return fmt.Errorf("error while encoding image: %s", err)
-		}
-
-		file.Close()
+		images = append(images, dst)
 	}
 
-	return nil
+	return images, nil
 }
 
 func getArea(gif *gif.GIF) (x, y int) {
