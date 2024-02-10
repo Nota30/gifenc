@@ -56,7 +56,7 @@ func split(file io.Reader, width int, height int, output Output) (err error) {
 
 		err = png.Encode(file, dst)
 		if err != nil {
-			return fmt.Errorf("error while creating image: %s", err)
+			return fmt.Errorf("error while encoding image: %s", err)
 		}
 
 		file.Close()

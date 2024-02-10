@@ -1,7 +1,7 @@
 package gifenc
 
 type Output struct {
-	Name string `default:"img"`
+	Name string
 	Path string
 }
 

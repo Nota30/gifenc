@@ -18,7 +18,6 @@ func (config Config) Encode(path string) error {
 
 	var allFiles []string
 	for _, file := range files {
-		fmt.Print(file.Name())
 		allFiles = append(allFiles, file.Name())
 	}
 
@@ -47,7 +46,11 @@ func (config Config) Encode(path string) error {
 		animated.Delay = append(animated.Delay, config.Delay)
 	}
 
-	file, err := os.Create(config.Output.Name)
+	if config.Output.Name == "" {
+		config.Output.Name = "final"
+	}
+
+	file, err := os.Create(fmt.Sprintf("%s%s%s", config.Output.Path, config.Output.Name, ".gif"))
 	if err != nil {
 		return fmt.Errorf("error while creating file: %s", err)
 	}
@@ -55,7 +58,7 @@ func (config Config) Encode(path string) error {
 
 	encodeErr := gif.EncodeAll(file, &animated)
 	if encodeErr != nil {
-		return fmt.Errorf("error while creating file: %s", err)
+		return fmt.Errorf("error while encoding file: %s", err)
 	}
 
 	return nil
