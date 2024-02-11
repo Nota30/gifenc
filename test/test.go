@@ -15,6 +15,30 @@ func main() {
 	encode()
 }
 
+// Decode
+func decode() {
+	init := gifenc.Config{
+		Delay: 30,
+	}
+
+	file, err := os.Open("test/input/sword.gif")
+	if err != nil {
+		fmt.Print(err)
+	}
+
+	gif, err := gif.DecodeAll(file)
+	if err != nil {
+		fmt.Print(err)
+	}
+
+	imgs, err := init.Decode(gif)
+	if err != nil {
+		fmt.Print(err)
+	}
+
+	saveImages(imgs)
+}
+
 // Encode
 func encode() {
 	init := gifenc.Config{
@@ -39,30 +63,6 @@ func encode() {
 	if encodeErr != nil {
 		fmt.Print(err)
 	}
-}
-
-// Decode
-func decode() {
-	init := gifenc.Config{
-		Delay: 30,
-	}
-
-	file, err := os.Open("test/input/sword.gif")
-	if err != nil {
-		fmt.Print(err)
-	}
-
-	gif, err := gif.DecodeAll(file)
-	if err != nil {
-		fmt.Print(err)
-	}
-
-	imgs, err := init.Decode(gif)
-	if err != nil {
-		fmt.Print(err)
-	}
-
-	saveImages(imgs)
 }
 
 func saveImages(imgs []*image.RGBA) {

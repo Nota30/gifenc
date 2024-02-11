@@ -19,13 +19,15 @@ func main() {
 	gify := gifenc.Config{}
 
     // Decode
-	imgs, err := gify.Decode("gif path")
+	var gif *gif.GIF // Provide a gif
+	imgs, err := gify.Decode(gif)
 	if err != nil {
 		println(err)
 	}
 
     // Encode
-    encoded, err := gify.Encode("folder path")
+	var images []image.Image // Provide an array of images
+    encoded, err := gify.Encode(images)
     if err != nil {
 		println(err)
 	}
