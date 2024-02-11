@@ -9,20 +9,23 @@ import (
 	"os"
 )
 
-func (config Config) Decode(path string) error {
+func (config Config) Decode(path string) ([]*image.RGBA, error) {
 	// Open the GIF
 	file, err := os.Open(path)
 	if err != nil {
-		return fmt.Errorf("error while opening file: %s", err)
+		return nil, fmt.Errorf("error while opening file: %s", err)
 	}
 
-	split(file, config.Width, config.Height, config.Output)
+	imgs, err := split(file, config.Width, config.Height)
+	if err != nil {
+		return nil, fmt.Errorf("error while decoding file: %s", err)
+	}
 
-	return nil
+	return imgs, nil
 }
 
 // Split the GIF into images
-func split(file io.Reader, width int, height int, output Output) (imgs []*image.RGBA, err error) {
+func split(file io.Reader, width int, height int) (imgs []*image.RGBA, err error) {
 	defer func() {
 		if recv := recover(); recv != nil {
 			err = fmt.Errorf("error while decoding file: %s", recv)
@@ -42,14 +45,13 @@ func split(file io.Reader, width int, height int, output Output) (imgs []*image.
 		height = y
 	}
 
-	dst := image.NewRGBA(image.Rect(0, 0, width, height))
-	draw.Draw(dst, dst.Bounds(), gif.Image[0], image.Point{}, draw.Src)
-
 	var images []*image.RGBA
 	for _, img := range gif.Image {
+		dst := image.NewRGBA(image.Rect(0, 0, width, height))
 		draw.Draw(dst, dst.Bounds(), img, image.Point{}, draw.Over)
 
-		images = append(images, dst)
+		new := dst
+		images = append(images, new)
 	}
 
 	return images, nil
