@@ -7,6 +7,7 @@ import (
 	"image/gif"
 )
 
+// Decode a gif. This will split the GIF into multiple images.
 func (config Config) Decode(gif *gif.GIF) ([]*image.RGBA, error) {
 	imgs, err := split(gif, config.Width, config.Height)
 	if err != nil {

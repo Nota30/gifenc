@@ -7,6 +7,7 @@ import (
 	"image/gif"
 )
 
+// Encode a GIF. Provide an array of image to be combined into a GIF.
 func (config Config) Encode(images []image.Image) (*gif.GIF, error) {
 	animated := gif.GIF{
 		LoopCount: 0,

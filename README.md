@@ -18,7 +18,7 @@ import (
 func main() {
 	gify := gifenc.Config{}
 
-    // Decode
+	// Decode
 	var gif *gif.GIF // Provide a gif
 	imgs, err := gify.Decode(gif)
 	if err != nil {
