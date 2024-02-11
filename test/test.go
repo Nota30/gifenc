@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"image"
 	"image/gif"
 	"image/png"
 	"os"
@@ -19,7 +20,10 @@ func encode() {
 	init := gifenc.Config{
 		Delay: 30,
 	}
-	encoded, err := init.Encode("test/output/")
+
+	images := getImages()
+
+	encoded, err := init.Encode(images)
 	if err != nil {
 		fmt.Print(err)
 	}
@@ -58,6 +62,10 @@ func decode() {
 		fmt.Print(err)
 	}
 
+	saveImages(imgs)
+}
+
+func saveImages(imgs []*image.RGBA) {
 	for i, img := range imgs {
 		file, err := os.Create(fmt.Sprintf("%s%s%d%s", "test/output/", "sword", i, ".png"))
 		if err != nil {
@@ -71,4 +79,35 @@ func decode() {
 
 		file.Close()
 	}
+}
+
+// Get all the images inside a directory
+func getImages() []image.Image {
+	var images []image.Image
+	files, err := os.ReadDir("test/output/")
+	if err != nil {
+		fmt.Print(err)
+	}
+
+	var allFiles []string
+	for _, file := range files {
+		allFiles = append(allFiles, file.Name())
+	}
+
+	for _, file := range allFiles {
+		reader, err := os.Open("test/output/" + file)
+		if err != nil {
+			fmt.Print(err)
+		}
+		defer reader.Close()
+
+		img, err := png.Decode(reader)
+		if err != nil {
+			fmt.Print(err)
+		}
+
+		images = append(images, img)
+	}
+
+	return images
 }
