@@ -5,18 +5,10 @@ import (
 	"image"
 	"image/draw"
 	"image/gif"
-	"io"
-	"os"
 )
 
-func (config Config) Decode(path string) ([]*image.RGBA, error) {
-	// Open the GIF
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, fmt.Errorf("error while opening file: %s", err)
-	}
-
-	imgs, err := split(file, config.Width, config.Height)
+func (config Config) Decode(gif *gif.GIF) ([]*image.RGBA, error) {
+	imgs, err := split(gif, config.Width, config.Height)
 	if err != nil {
 		return nil, fmt.Errorf("error while decoding file: %s", err)
 	}
@@ -25,17 +17,12 @@ func (config Config) Decode(path string) ([]*image.RGBA, error) {
 }
 
 // Split the GIF into images
-func split(file io.Reader, width int, height int) (imgs []*image.RGBA, err error) {
+func split(gif *gif.GIF, width int, height int) (imgs []*image.RGBA, err error) {
 	defer func() {
 		if recv := recover(); recv != nil {
 			err = fmt.Errorf("error while decoding file: %s", recv)
 		}
 	}()
-
-	gif, err := gif.DecodeAll(file)
-	if err != nil {
-		return nil, fmt.Errorf("error while decoding file: %s", err)
-	}
 
 	x, y := getArea(gif)
 	if width == 0 {
