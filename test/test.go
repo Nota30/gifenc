@@ -17,9 +17,7 @@ func main() {
 
 // Decode
 func decode() {
-	init := gifenc.Config{
-		Delay: 30,
-	}
+	init := gifenc.Config{}
 
 	file, err := os.Open("test/input/sword.gif")
 	if err != nil {
